@@ -10,55 +10,13 @@ dotenv.config({
  
 const app = express();
 
-
-
-const startServer = async () => {
-  await dbConnect().then(()=>{
-    app.listen(process.env.PORT || 3000, () => {
-    console.log(`App is listening on port ${process.env.PORT || 3000}`);
+dbConnect().then(()=>{
+  app.listen(process.env.PORT || 8000 , ()=>{
+    console.log(`App is listening on PORT ${process.env.PORT || 8000}`);
   })
-  }).catch((err)=>{
-    console.log("MongoDB connection failed !! ",err);
-  })
-  
-};
 
-startServer();
+}).catch((error)=>{
+  console.log("Your app is either not connected to server or nor connected to DB",error);
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-// ( async() => {
-//   try {
-//     await mongoose.connect(`${process.env.MONGODB_URI}/${
-//         DB_NAME
-//     }`)
-
-//     app.listen(process.env.PORT, ()=>{
-//         console.log("App is listening on port $ {process.env.PORT}")
-//     })
-
-
-//   } catch (error) {
-//     console.log("ERROR : ",error)
-//     throw err
-//   }
-// })();
-
+});
 
