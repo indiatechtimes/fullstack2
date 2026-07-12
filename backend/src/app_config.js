@@ -22,11 +22,10 @@ app.use(express.urlencoded({
 
 }));
 
+// public is the folder name 
 app.use(express.static("public"));
 
 app.use(cookieParser());
-
-
 
 
 
