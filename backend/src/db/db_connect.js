@@ -19,6 +19,7 @@ const dbConnect = async () => {
         dbName: DB_NAME,
       }
     );
+    
 
     console.log(
       `MongoDB Connected!! Host: ${connectionInstance.connection.host}`
