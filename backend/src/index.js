@@ -1,14 +1,11 @@
 import dotenv from "dotenv";
-import express from "express";
 
 import dbConnect from "./db/db_connect.js";
+import { app } from "./app_config.js";
 
 dotenv.config({
   path: "../.env",
 });
-
- 
-const app = express();
 
 
 dbConnect().then(()=>{
