@@ -3,7 +3,7 @@ import { asyncHandler } from "../utils/async_handler.js";
 
 import { ApiError } from "../utils/api_error.js";
 
-import { user } from "../models/user.model.js";
+import { User } from "../models/user.model.js";
 import { configDotenv } from "dotenv";
 import { upload } from "../middlewares/multer.middleware.js";
 import { uploadOnCloudinary } from "../utils/cloudinary.js";
@@ -58,7 +58,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     };
 
-    const existedUser = user.findOne({
+    const existedUser = await User.findOne({
         $or: [
             {
                 userName
@@ -73,26 +73,22 @@ const registerUser = asyncHandler(async (req, res) => {
 
     if (existedUser) {
         console.log("user is already exist");
-    }
-
-
-    if (existedUser) {
-        throw new ApiError(409, "user already exist ");
+        throw new ApiError(409, "user already exist");
     };
 
 
     // multer gives us 
-    const avatarLocalPath = req.files?.avtar[0]?.path;
-    const coverImageLocalPath = req.files?.coverImage[0]?.path;
-
+    const avatarLocalPath = req.files?.avatar?.[0]?.path;
+    const coverImageLocalPath = req.files?.coverImage?.[0]?.path;
 
     if (!avatarLocalPath) {
-        throw new ApiError(400, "avatar Image is required");
+        throw new ApiError(400, "avatar image is required");
     }
 
-
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = await uploadOnCloudinary(coverImageLocalPath);
+    const coverImage = coverImageLocalPath
+        ? await uploadOnCloudinary(coverImageLocalPath)
+        : null;
 
 
     if (!avatar) {
@@ -101,7 +97,7 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
 
-    const user = await user.create({
+    const user = await User.create({
         fullName,
         avatar: avatar.url,
         coverImage: coverImage?.url || "",
@@ -111,7 +107,7 @@ const registerUser = asyncHandler(async (req, res) => {
 
     });
 
-    const createdUser = await user.findById(user._id).select(
+    const createdUser = await User.findById(user._id).select(
         "-password -refreshToken"
     )
 
