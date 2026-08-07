@@ -30,7 +30,7 @@ const registerUser = asyncHandler(async (req, res) => {
     //return res
 
 
-    // for the checking purpose
+    // get user detail from frontend
     const { fullName, email, userName, password } = req.body;
 
     // for testing
@@ -86,13 +86,13 @@ const registerUser = asyncHandler(async (req, res) => {
     }
 
     const avatar = await uploadOnCloudinary(avatarLocalPath);
-    const coverImage = coverImageLocalPath
+    const coverImage = await coverImageLocalPath
         ? await uploadOnCloudinary(coverImageLocalPath)
         : null;
 
 
     if (!avatar) {
-        throw new ApiError(400, "Avatar image is required");
+        throw new ApiError(400, "Try Again");
 
     }
 
@@ -108,7 +108,7 @@ const registerUser = asyncHandler(async (req, res) => {
     });
 
     const createdUser = await User.findById(user._id).select(
-        "-password -refreshToken"
+        "-password -refreshToken"// password and refreshToken is hided
     )
 
     if (!createdUser) {

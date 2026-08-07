@@ -64,6 +64,7 @@ userSchema.pre("save", async function () {  //pre() is called a Mongoose middlew
     }
 });
 
+
 userSchema.methods.isPasswordCorrect = async function (password) {
     return await bcrypt.compare(password, this.password);
 }

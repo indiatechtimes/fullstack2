@@ -12,6 +12,7 @@ router.route("/register").post(
         {
             name: "avatar",
             maxCount: 1
+
         },
         {
             name: "coverImage",
@@ -19,7 +20,7 @@ router.route("/register").post(
         }
     ]), registerUser)
 
-
+// here we can create more route for user like /register 
 
 
 
