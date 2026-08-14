@@ -364,7 +364,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     }
 
-    User.findByIdAndUpdate(
+    const user=await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -379,7 +379,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 
     return res
         .status(200)
-    .json(ApiResponse(200,user,"avatar Image is updated successfully!"))
+    .json(new ApiResponse(200,user,"avatar Image is updated successfully!"))
 });
 
 // i can create (updateUserCoverImage) endpoit as same as (updateUserAvatar)
