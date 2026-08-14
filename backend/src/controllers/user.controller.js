@@ -297,7 +297,7 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     const { oldPassword, newPassword } = req.body;
     const user = await User.findById(req.user?._id);
     const isPasswordCorrect = await user.isPasswordCorrect(oldPassword);
-    
+
 
     if (!isPasswordCorrect) {
         throw new ApiError(400, "wrong password");
@@ -311,8 +311,8 @@ const changeCurrentPassword = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(new ApiResponse(200, {}, "password changed successfully"));
-    
-    
+
+
 
 
 
@@ -333,7 +333,7 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     if (!(fullName || email)) {
         throw new ApiError(400, "All fields are required!");
     };
-    User.findByIdAndUpdate(
+    const user = await User.findByIdAndUpdate(
         req.user?._id,
         {
             $set: {
@@ -349,8 +349,40 @@ const updateAccountDetails = asyncHandler(async (req, res) => {
     return res
         .status(200)
         .json(new ApiResponse(200, user, "Account details updated successfully!"));
-    
+
 });
+
+const updateUserAvatar = asyncHandler(async (req, res) => {
+    const avatarLocalPath = req.file?.path;
+    if (!avatarLocalPath) {
+        throw new ApiError(400, "avatar file is missing!");
+    };
+    const avatar = await uploadOnCloudinary(avatarLocalPath);
+
+    if (!avatar.url) {
+        throw new ApiError(400, "Error while uploading avatar on cloudinary!");
+
+    }
+
+    User.findByIdAndUpdate(
+        req.user?._id,
+        {
+            $set: {
+                avatar: avatar.url
+            },
+
+        },
+        {
+            new: true
+        }
+    ).select("-password");
+
+    return res
+        .status(200)
+    .json(ApiResponse(200,user,"avatar Image is updated successfully!"))
+});
+
+// i can create (updateUserCoverImage) endpoit as same as (updateUserAvatar)
 
 
 
@@ -361,5 +393,6 @@ export {
     refreshAccessToken,
     changeCurrentPassword,
     getCurrentUser,
-    updateAccountDetails
+    updateAccountDetails,
+    updateUserAvatar
 };
