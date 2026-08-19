@@ -10,6 +10,7 @@ import { uploadOnCloudinary } from "../utils/cloudinary.js";
 import { ApiResponse } from "../utils/api_response.js";
 
 import jwt from "jsonwebtoken";
+import mongoose from "mongoose";
 
 
 const generateAccessAndRefreshTokens = async (userId) => {
@@ -385,7 +386,7 @@ const updateUserAvatar = asyncHandler(async (req, res) => {
 // create updateUserCoverImage 
 
 
-const getUserChannelProfile = asyncHandler(async () => {
+const getUserChannelProfile = asyncHandler(async (req, res) => {
     const { userName } = req.params;
     if (!userName.trim()) {
         throw new ApiError(400, "username is missing");
@@ -465,6 +466,59 @@ const getUserChannelProfile = asyncHandler(async () => {
         .status(200)
         .json(
             new ApiError(200, channel[0], "User channel fetched successfull")
+        )
+
+
+});
+
+const getWatchHistory = asyncHandler(async (req, res) => {
+    const user = await User.aggregate([
+        {
+            $match: {
+                _id: new mongoose.Types.ObjectId(req.user._id)
+            }
+        },
+        {
+            $lookup: {
+                from: "videos",
+                localField: "watchHistory",
+                foreignField: "_id",
+                as: "watchHistory",
+                pipeline: [
+                    {
+                        $lookup: {
+                            from: "users",
+                            localField: "owner",
+                            foreignField: "_id",
+                            as: "owner",
+                            pipeline: [
+                                {
+                                    $project: {
+                                        fullName: 1,
+                                        userName: 1,
+                                        avatar: 1
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    {
+                        $addFields: {
+                            owner: {
+                                $first: "$owner"
+                            }
+                        }
+                    }
+                ]
+            }
+        }
+
+    ]),
+
+    return res
+        .status(200)
+        .json(
+            new ApiResponse(200, user[0].watchHistory, "retrive watch History successfully")
         )
 
 
