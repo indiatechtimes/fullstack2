@@ -2,7 +2,7 @@ import mongoose, { Schema, Types } from "mongoose";
 
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { video } from "./video.model.js";
+//import { video } from "./video.model.js";
 const userSchema = new mongoose.Schema({
 
     id: {

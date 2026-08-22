@@ -13,6 +13,9 @@ import jwt from "jsonwebtoken";
 import mongoose from "mongoose";
 
 
+
+
+
 const generateAccessAndRefreshTokens = async (userId) => {
     try {
 
@@ -214,7 +217,7 @@ const logoutUser = asyncHandler(async (req, res) => {
         req.user._id,
         {
             $unset: {
-                refreshToken:1
+                refreshToken: 1
             }
 
         },
@@ -510,13 +513,17 @@ const getWatchHistory = asyncHandler(async (req, res) => {
             }
         }
 
-    ]),
+    ]);
 
-    return res
-        .status(200)
-        .json(
-            new ApiResponse(200, user[0].watchHistory, "retrive watch History successfully")
-        )
+    // return res
+    //     .status(200)
+    //     .json(
+    //         new ApiResponse(200, user[0].watchHistory, "retrive watch History successfully")
+    // );
+
+    return res.status(200).json(
+        new ApiResponse(200, user[0].watchHistory, "retrive watch History successfully")
+    );
 
 
 })
@@ -534,5 +541,6 @@ export {
     getCurrentUser,
     updateAccountDetails,
     updateUserAvatar,
-    getUserChannelProfile
+    getUserChannelProfile,
+    getWatchHistory
 };
